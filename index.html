@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ben Duncan — Operational &amp; Product Leader</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lavender:      #EAE6F4;
+      --lavender-mid:  #C5BDE0;
+      --lavender-dark: #5E519A;
+      --peach:         #FAE9DC;
+      --peach-dark:    #B5603C;
+      --mint:          #D9F0E6;
+      --mint-dark:     #2E7D5A;
+      --blue:          #D9E8FA;
+      --blue-dark:     #2A5F9E;
+      --dark:          #26263A;
+      --dark-mid:      #3E3E56;
+      --off-white:     #FAFAF7;
+      --text:          #26263A;
+      --muted:         #7A7A96;
+      --border:        rgba(38, 38, 58, 0.1);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      color: var(--text);
+      background: var(--off-white);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    #main-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      padding: 10px 24px;
+      background: rgba(250, 250, 247, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transform: translateY(-110%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #main-nav.visible { transform: translateY(0); }
+    #main-nav ul { display: flex; gap: 2px; list-style: none; flex-wrap: wrap; justify-content: center; }
+    #main-nav ul li a {
+      display: block;
+      padding: 5px 13px;
+      border-radius: 99px;
+      font-family: 'Arial', sans-serif;
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      color: var(--muted);
+      transition: background 0.18s, color 0.18s;
+    }
+    #main-nav ul li a:hover { color: var(--text); background: rgba(38,38,58,0.06); }
+    #main-nav ul li a.active { color: var(--lavender-dark); background: var(--lavender); }
+
+    /* ─── SHARED ─── */
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 52px; }
+    .eyebrow {
+      font-family: 'Arial', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .eyebrow-light { color: rgba(255,255,255,0.38); }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: var(--off-white);
+      padding: 100px 0 80px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .hero-name {
+      font-size: clamp(52px, 6.5vw, 84px);
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      color: var(--dark);
+    }
+    .hero-title {
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--lavender-dark);
+      margin-top: 14px;
+    }
+    .hero-rule {
+      width: 52px;
+      height: 2px;
+      background: var(--lavender-mid);
+      margin: 30px 0;
+    }
+    .hero-summary {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--dark);
+      max-width: 460px;
+    }
+    .hero-open {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .open-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .open-pills { display: flex; gap: 7px; flex-wrap: wrap; }
+    .open-pill {
+      padding: 5px 14px;
+      border-radius: 99px;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: var(--lavender-dark);
+      background: var(--lavender);
+      border: 1px solid var(--lavender-mid);
+      letter-spacing: 0.01em;
+    }
+
+    .hero-contact {
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .hero-contact a {
+      font-family: 'Arial', sans-serif;
+      font-size: 12.5px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.18s;
+    }
+    .hero-contact a:hover { color: var(--lavender-dark); }
+
+    .hero-stats { display: flex; flex-direction: column; gap: 14px; }
+    .hero-stat {
+      border-radius: 14px;
+      padding: 22px 28px;
+      width: fit-content;
+    }
+    .hero-stat:nth-child(1) { background: var(--lavender); }
+    .hero-stat:nth-child(2) { background: var(--peach); margin-left: 44px; }
+    .hero-stat:nth-child(3) { background: var(--mint); margin-left: 22px; }
+    .stat-big {
+      font-family: 'Arial', sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1;
+    }
+    .stat-label-sm {
+      font-family: 'Arial', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ─── TIMELINE ─── */
+    #timeline {
+      background: var(--dark);
+      padding: 90px 0;
+    }
+    .timeline-track {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .tl-card {
+      display: block;
+      border-top: 1.5px solid rgba(255,255,255,0.12);
+      padding-top: 22px;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .tl-card:hover { border-color: rgba(255,255,255,0.5); }
+    .tl-dot {
+      display: inline-block;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      margin-bottom: 14px;
+    }
+    .tl-dates {
+      font-family: 'Arial', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.36);
+      margin-bottom: 10px;
+    }
+    .tl-role {
+      font-size: 16px;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .tl-location {
+      font-family: 'Arial', sans-serif;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.38);
+    }
+
+    /* ─── JOB SECTIONS ─── */
+    .job-section { padding: 96px 0; }
+    #job-1 { background: var(--lavender); }
+    #job-2 { background: var(--peach); }
+    #job-3 { background: var(--blue); }
+    #job-4 { background: var(--mint); }
+
+    .job-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr 180px;
+      gap: 56px;
+      align-items: start;
+    }
+
+    .job-role-title {
+      font-size: 21px;
+      line-height: 1.3;
+      margin-bottom: 14px;
+      color: var(--dark);
+    }
+    .job-company {
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .job-dates {
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+    .job-location {
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .job-bullets { list-style: none; }
+    .job-bullets li {
+      display: flex;
+      gap: 14px;
+      font-size: 14.5px;
+      line-height: 1.72;
+      color: var(--dark);
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .job-bullets li:first-child { border-top: 1px solid var(--border); }
+    .bullet-dash {
+      color: var(--muted);
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .bullet-extra { display: none; }
+
+    .expand-btn {
+      margin-top: 16px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 7px 18px;
+      font-family: 'Arial', sans-serif;
+      font-size: 11.5px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .expand-btn:hover {
+      background: rgba(38,38,58,0.06);
+      color: var(--dark);
+      border-color: rgba(38,38,58,0.2);
+    }
+
+    .job-stats { display: flex; flex-direction: column; gap: 14px; }
+    .kpi-card {
+      background: rgba(255, 255, 255, 0.52);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .kpi-number {
+      font-family: 'Arial', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1;
+    }
+    .kpi-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.45;
+    }
+
+    /* ─── SKILLS ─── */
+    #skills {
+      background: var(--off-white);
+      padding: 96px 0;
+    }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 52px;
+      margin-top: 44px;
+    }
+    .skill-group-title {
+      font-family: 'Arial', sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .pills { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pill {
+      padding: 5px 13px;
+      border-radius: 99px;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: var(--dark);
+      background: white;
+      border: 1px solid var(--border);
+      letter-spacing: 0.01em;
+    }
+
+    /* ─── EDUCATION / FOOTER ─── */
+    #education {
+      background: var(--dark);
+      padding: 80px 0 60px;
+    }
+    .edu-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 40px;
+    }
+    .edu-school {
+      font-size: 22px;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 8px;
+    }
+    .edu-degree {
+      font-family: 'Arial', sans-serif;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.36);
+      letter-spacing: 0.03em;
+    }
+    .edu-links { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
+    .edu-links a {
+      font-family: 'Arial', sans-serif;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      transition: color 0.18s;
+    }
+    .edu-links a:hover { color: rgba(255,255,255,0.85); }
+    .footer-rule { width: 100%; height: 1px; background: rgba(255,255,255,0.08); margin: 44px 0 28px; }
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-name {
+      font-size: 18px;
+      color: rgba(255,255,255,0.45);
+    }
+    .footer-loc {
+      font-family: 'Arial', sans-serif;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── STICKY NAV ─── -->
+  <nav id="main-nav" role="navigation" aria-label="Page sections">
+    <ul>
+      <li><a href="#hero"      data-section="hero">About</a></li>
+      <li><a href="#timeline"  data-section="timeline">Career</a></li>
+      <li><a href="#job-1"     data-section="job-1">Sr. Manager</a></li>
+      <li><a href="#job-2"     data-section="job-2">Manager</a></li>
+      <li><a href="#job-3"     data-section="job-3">Sr. Acct Mgr</a></li>
+      <li><a href="#job-4"     data-section="job-4">Acct Mgr</a></li>
+      <li><a href="#skills"    data-section="skills">Skills</a></li>
+      <li><a href="#education" data-section="education">Education</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <h1 class="hero-name">Ben<br>Duncan</h1>
+          <p class="hero-title">Operational &amp; Product Leader</p>
+          <div class="hero-rule"></div>
+          <p class="hero-summary">I'm an operational leader who turns complex international markets into scalable revenue. Most recently at Wondery, I managed a $4M portfolio across five countries — growing it 23% year-over-year by building tighter partnerships, smarter workflows, and ad strategies localized for each market's needs.</p>
+          <div class="hero-open">
+            <p class="open-label">Open to</p>
+            <div class="open-pills">
+              <span class="open-pill">Ad Tech Product Management</span>
+              <span class="open-pill">Ad Operational Leadership</span>
+            </div>
+          </div>
+          <div class="hero-contact">
+            <a href="mailto:beduncan@umich.edu">beduncan@umich.edu</a>
+            <a href="https://linkedin.com/in/ben-duncan-014" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="tel:+18184438146">Los Angeles, CA &nbsp;·&nbsp; +1 818-443-8146</a>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="stat-big" data-target="4" data-prefix="$" data-suffix="M">$4M</div>
+            <div class="stat-label-sm">International Revenue Portfolio</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-big" data-target="23" data-suffix="%">23%</div>
+            <div class="stat-label-sm">Year-over-Year Growth</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-big" data-target="5">5</div>
+            <div class="stat-label-sm">International Markets</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TIMELINE ─── -->
+  <section id="timeline">
+    <div class="container">
+      <p class="eyebrow eyebrow-light">Career at Wondery · an Amazon company</p>
+      <div class="timeline-track">
+        <a href="#job-4" class="tl-card">
+          <span class="tl-dot" style="background:var(--mint);"></span>
+          <p class="tl-dates">Feb 2020 – Apr 2021</p>
+          <p class="tl-role">International Account Manager</p>
+          <p class="tl-location">🇺🇸 Los Angeles</p>
+        </a>
+        <a href="#job-3" class="tl-card">
+          <span class="tl-dot" style="background:var(--blue);"></span>
+          <p class="tl-dates">Apr 2021 – Apr 2022</p>
+          <p class="tl-role">Senior International Account Manager</p>
+          <p class="tl-location">🇺🇸 Los Angeles</p>
+        </a>
+        <a href="#job-2" class="tl-card">
+          <span class="tl-dot" style="background:var(--peach);"></span>
+          <p class="tl-dates">Apr 2022 – Apr 2025</p>
+          <p class="tl-role">Manager, International Ad Operations</p>
+          <p class="tl-location">🇬🇧 London</p>
+        </a>
+        <a href="#job-1" class="tl-card">
+          <span class="tl-dot" style="background:var(--lavender);"></span>
+          <p class="tl-dates">Apr 2025 – Oct 2025</p>
+          <p class="tl-role">Senior Manager, International Ad Operations</p>
+          <p class="tl-location">🇬🇧 London</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── JOB 1: SR. MANAGER ─── -->
+  <section id="job-1" class="job-section">
+    <div class="container">
+      <div class="job-grid">
+        <div>
+          <p class="eyebrow">Most Recent</p>
+          <h2 class="job-role-title">Senior Manager, International Ad Operations</h2>
+          <p class="job-company">Wondery · an Amazon company</p>
+          <p class="job-dates">Apr 2025 – Oct 2025</p>
+          <p class="job-location">🇬🇧 London, UK</p>
+        </div>
+        <div>
+          <p class="eyebrow">Responsibilities</p>
+          <ul class="job-bullets" id="bullets-job-1">
+            <li>
+              <span class="bullet-dash">—</span>
+              Managed a $4M international revenue portfolio, leveraging forecasting, pricing, and performance analytics to optimize monetization strategies and achieve 23% year-over-year growth.
+            </li>
+            <li>
+              <span class="bullet-dash">—</span>
+              Led strategic third-party partnerships and optimized workflows to support campaign activation and inventory management at scale, reducing manual activation time by 25% and streamlining 50+ campaigns per month across 5 markets.
+            </li>
+            <li class="bullet-extra">
+              <span class="bullet-dash">—</span>
+              Acted as the main sales POC for all international content acquisition opportunities, providing pricing, sell-through rate, and sales justification for all incoming content leads — both 1st party and 3rd party.
+            </li>
+            <li class="bullet-extra">
+              <span class="bullet-dash">—</span>
+              Developed and executed scalable ad product strategies across 2 focus and 3 tier 2 international markets, crafting pricing frameworks that drove partner adoption and revenue expansion tailored to each market's specific needs.
+            </li>
+            <li class="bullet-extra">
+              <span class="bullet-dash">—</span>
+              Collaborated with cross-functional teams to incorporate data-driven insights into monetization strategies for diverse creator and brand portfolios.
+            </li>
+          </ul>
+          <button class="expand-btn" data-job="job-1" aria-expanded="false">+ Show More</button>
+        </div>
+        <div class="job-stats">
+          <div class="kpi-card">
+            <div class="kpi-number">$4M</div>
+            <div class="kpi-label">Revenue Portfolio</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-number">23%</div>
+            <div class="kpi-label">YoY Growth</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-number">25%</div>
+            <div class="kpi-label">Activation Time Saved</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── JOB 2: MANAGER ─── -->
+  <section id="job-2" class="job-section">
+    <div class="container">
+      <div class="job-grid">
+        <div>
+          <p class="eyebrow">2022 – 2025</p>
+          <h2 class="job-role-title">Manager, International Ad Operations</h2>
+          <p class="job-company">Wondery · an Amazon company</p>
+          <p class="job-dates">Apr 2022 – Apr 2025</p>
+          <p class="job-location">🇬🇧 London, UK</p>
+        </div>
+        <div>
+          <p class="eyebrow">Responsibilities</p>
+          <ul class="job-bullets" id="bullets-job-2">
+            <li>
+              <span class="bullet-dash">—</span>
+              Designed scalable workflows to support Amazon system integrations including: defining all ad products, setting rate card strategy, yield management, and account management best practices.
+            </li>
+            <li>
+              <span class="bullet-dash">—</span>
+              Managed strategic third-party partnerships across programmatic monetization and market intelligence platforms, optimizing yield and informing international pricing and go-to-market strategy.
+            </li>
+            <li class="bullet-extra">
+              <span class="bullet-dash">—</span>
+              Optimized international revenue reconciliation and billing processes to ensure accurate revenue recognition and financial integrity across markets.
+            </li>
+          </ul>
+          <button class="expand-btn" data-job="job-2" aria-expanded="false">+ Show More</button>
+        </div>
+        <div class="job-stats">
+          <div class="kpi-card">
+            <div class="kpi-number">5</div>
+            <div class="kpi-label">Markets Managed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── JOB 3: SR. ACCOUNT MANAGER ─── -->
+  <section id="job-3" class="job-section">
+    <div class="container">
+      <div class="job-grid">
+        <div>
+          <p class="eyebrow">2021 – 2022</p>
+          <h2 class="job-role-title">Senior International Account Manager</h2>
+          <p class="job-company">Wondery · an Amazon company</p>
+          <p class="job-dates">Apr 2021 – Apr 2022</p>
+          <p class="job-location">🇺🇸 Los Angeles, CA</p>
+        </div>
+        <div>
+          <p class="eyebrow">Responsibilities</p>
+          <ul class="job-bullets" id="bullets-job-3">
+            <li>
+              <span class="bullet-dash">—</span>
+              Conducted monthly business reviews with international leadership and partners to drive revenue growth and promptly resolve performance issues.
+            </li>
+            <li>
+              <span class="bullet-dash">—</span>
+              Managed relationships with strategic creative &amp; commercial partners to implement monetization strategies, serving as the primary liaison for performance reviews and growth planning.
+            </li>
+            <li class="bullet-extra">
+              <span class="bullet-dash">—</span>
+              Project-managed cross-functional teams to develop custom commercial solutions for international brand partners, enhancing campaign performance and long-term partnerships.
+            </li>
+          </ul>
+          <button class="expand-btn" data-job="job-3" aria-expanded="false">+ Show More</button>
+        </div>
+        <div class="job-stats">
+          <div class="kpi-card">
+            <div class="kpi-number">MBR</div>
+            <div class="kpi-label">Monthly Business Reviews with Int'l Leadership</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-number">XFN</div>
+            <div class="kpi-label">Cross-functional Team Leadership</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── JOB 4: ACCOUNT MANAGER ─── -->
+  <section id="job-4" class="job-section">
+    <div class="container">
+      <div class="job-grid">
+        <div>
+          <p class="eyebrow">Where it started</p>
+          <h2 class="job-role-title">International Account Manager</h2>
+          <p class="job-company">Wondery · an Amazon company</p>
+          <p class="job-dates">Feb 2020 – Apr 2021</p>
+          <p class="job-location">🇺🇸 Los Angeles, CA</p>
+        </div>
+        <div>
+          <p class="eyebrow">Responsibilities</p>
+          <ul class="job-bullets" id="bullets-job-4">
+            <li>
+              <span class="bullet-dash">—</span>
+              Designed international media plans and pricing frameworks to support third-party sales partners, aligning yield strategy with local market demand resulting in a +30% lift in host-read campaign bookings from international sales partners.
+            </li>
+            <li>
+              <span class="bullet-dash">—</span>
+              Oversaw campaign performance reconciliation, ensuring accurate billing and safeguarding revenue integrity across international partners.
+            </li>
+          </ul>
+        </div>
+        <div class="job-stats">
+          <div class="kpi-card">
+            <div class="kpi-number">+30%</div>
+            <div class="kpi-label">Host-Read Campaign Bookings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SKILLS ─── -->
+  <section id="skills">
+    <div class="container">
+      <p class="eyebrow">Core Competencies</p>
+      <div class="skills-grid">
+        <div>
+          <p class="skill-group-title">Strategy</p>
+          <div class="pills">
+            <span class="pill">Ad Product Management</span>
+            <span class="pill">Monetization Strategy</span>
+            <span class="pill">Revenue Forecasting</span>
+            <span class="pill">Pricing Strategy</span>
+            <span class="pill">Programmatic Advertising</span>
+            <span class="pill">Go-to-Market</span>
+            <span class="pill">Yield Management</span>
+          </div>
+        </div>
+        <div>
+          <p class="skill-group-title">Operations</p>
+          <div class="pills">
+            <span class="pill">Ad Operations</span>
+            <span class="pill">Revenue Reconciliation</span>
+            <span class="pill">Campaign Management</span>
+            <span class="pill">Project Management</span>
+            <span class="pill">Cross-functional Collaboration</span>
+          </div>
+        </div>
+        <div>
+          <p class="skill-group-title">Partnerships &amp; Tools</p>
+          <div class="pills">
+            <span class="pill">Partnership Management</span>
+            <span class="pill">Account Management</span>
+            <span class="pill">Salesforce</span>
+            <span class="pill">Art19</span>
+            <span class="pill">AdsWizz</span>
+            <span class="pill">Triton Yield-Op</span>
+            <span class="pill">Magellan.ai</span>
+            <span class="pill">Podsights</span>
+            <span class="pill">VAST</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── EDUCATION + FOOTER ─── -->
+  <section id="education">
+    <div class="container">
+      <p class="eyebrow eyebrow-light">Education</p>
+      <div class="edu-row">
+        <div>
+          <h3 class="edu-school">University of Michigan, Ann Arbor</h3>
+          <p class="edu-degree">B.A. Sport Management &nbsp;·&nbsp; Class of 2017</p>
+        </div>
+        <div class="edu-links">
+          <a href="mailto:beduncan@umich.edu">beduncan@umich.edu</a>
+          <a href="https://linkedin.com/in/ben-duncan-014" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="tel:+18184438146">+1 818-443-8146</a>
+        </div>
+      </div>
+      <div class="footer-rule"></div>
+      <div class="footer-row">
+        <span class="footer-name">Ben Duncan</span>
+        <span class="footer-loc">Los Angeles, CA</span>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ── Scroll-spy nav ──
+    const nav     = document.getElementById('main-nav');
+    const hero    = document.getElementById('hero');
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('#main-nav a[data-section]'));
+
+    function onScroll() {
+      const scrollY = window.scrollY;
+
+      // Show nav after halfway through hero
+      nav.classList.toggle('visible', scrollY > hero.offsetHeight * 0.45);
+
+      // Active link
+      let current = sections[0].id;
+      for (const sec of sections) {
+        if (scrollY >= sec.offsetTop - 100) current = sec.id;
+      }
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.dataset.section === current);
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // ── Expand / Collapse ──
+    document.querySelectorAll('.expand-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const job     = btn.dataset.job;
+        const list    = document.getElementById('bullets-' + job);
+        const extras  = list.querySelectorAll('.bullet-extra');
+        const open    = btn.getAttribute('aria-expanded') === 'true';
+
+        extras.forEach(li => {
+          li.style.display = open ? 'none' : 'flex';
+        });
+
+        btn.setAttribute('aria-expanded', String(!open));
+        btn.textContent = open ? '+ Show More' : '− Show Less';
+      });
+    });
+
+    // ── Counter animation on hero stats ──
+    const counterEls = document.querySelectorAll('.stat-big[data-target]');
+    const counterObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el      = entry.target;
+        const target  = parseFloat(el.dataset.target);
+        const prefix  = el.dataset.prefix  || '';
+        const suffix  = el.dataset.suffix  || '';
+        const dur     = 1100;
+        const start   = performance.now();
+
+        (function tick(now) {
+          const t = Math.min((now - start) / dur, 1);
+          const v = Math.round((1 - Math.pow(1 - t, 3)) * target);
+          el.textContent = prefix + v + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        })(start);
+
+        counterObserver.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+
+    counterEls.forEach(el => counterObserver.observe(el));
+  </script>
+</body>
+</html>
