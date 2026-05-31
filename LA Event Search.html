@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The L.A. Roundup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f4ecda; --paper:#fffdf6; --ink:#221d16; --ink-soft:#5b5142; --line:#221d16;
+    --terracotta:#d4512a; --palm:#2f6b46; --teal:#1d6f78; --pink:#d6406b; --gold:#dd9012; --indigo:#46569d;
+    --shadow:rgba(34,29,22,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Hanken Grotesk',sans-serif;color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 80% -10%, #f7d7a8 0%, rgba(247,215,168,0) 55%),
+      radial-gradient(100% 70% at 0% 0%, #f2c9c0 0%, rgba(242,201,192,0) 50%),
+      var(--cream);
+    background-attachment:fixed;min-height:100vh;line-height:1.45;-webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 22px 80px}
+  header.mast{padding:40px 0 18px;border-bottom:3px solid var(--line)}
+  .kicker{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:600;color:var(--ink-soft)}
+  .kicker .sun{color:var(--terracotta)}
+  h1{font-family:'Fraunces',serif;font-weight:900;line-height:.92;letter-spacing:-.02em;font-size:clamp(46px,9vw,108px);margin:10px 0 6px}
+  h1 .em{font-style:italic;font-weight:500;color:var(--terracotta)}
+  .tag{font-family:'Fraunces',serif;font-style:italic;font-size:clamp(16px,2.4vw,22px);color:var(--ink-soft);max-width:640px}
+  .periods{display:flex;gap:6px;flex-wrap:wrap;margin:26px 0 6px}
+  .period{appearance:none;border:none;cursor:pointer;background:transparent;color:var(--ink);
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(18px,2.6vw,26px);padding:6px 4px 10px;position:relative;letter-spacing:-.01em;opacity:.45;transition:opacity .2s}
+  .period:hover{opacity:.8}
+  .period.active{opacity:1}
+  .period.active::after{content:"";position:absolute;left:4px;right:4px;bottom:2px;height:4px;background:var(--terracotta);border-radius:2px}
+  .controls{position:sticky;top:0;z-index:20;margin:14px 0 26px;padding:16px;background:rgba(255,253,246,.86);
+    backdrop-filter:blur(8px);border:2px solid var(--line);border-radius:14px;box-shadow:0 6px 0 var(--shadow)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:13px}
+  .chip{appearance:none;cursor:pointer;font-family:'Hanken Grotesk';font-weight:600;font-size:13px;
+    border:1.6px solid var(--line);background:var(--paper);color:var(--ink);padding:7px 13px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:6px;transition:transform .12s,box-shadow .12s,background .12s,color .12s}
+  .chip:hover{transform:translateY(-1px)}
+  .chip .dot{width:9px;height:9px;border-radius:50%;background:var(--c)}
+  .chip[data-on="1"]{background:var(--c);color:#fff8ec;border-color:var(--c);box-shadow:0 3px 0 var(--shadow)}
+  .chip[data-on="1"] .dot{background:#fff8ec}
+  .row2{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .search{flex:1 1 220px;position:relative;min-width:180px}
+  .search input{width:100%;font-family:'Hanken Grotesk';font-size:14px;padding:9px 12px 9px 34px;border:1.6px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
+  .search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.5}
+  select{font-family:'Hanken Grotesk';font-size:14px;font-weight:500;padding:9px 30px 9px 12px;border:1.6px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);cursor:pointer;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23221d16' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+  .freebtn{font-family:'Hanken Grotesk';font-weight:600;font-size:13px;cursor:pointer;border:1.6px solid var(--line);background:var(--paper);color:var(--ink);padding:9px 14px;border-radius:10px}
+  .freebtn[data-on="1"]{background:var(--palm);color:#fff8ec;border-color:var(--palm)}
+  .fresh{margin-left:auto;font-family:'Hanken Grotesk';font-weight:700;font-size:13px;cursor:pointer;border:2px solid var(--line);background:var(--gold);color:var(--ink);padding:9px 16px;border-radius:10px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 3px 0 var(--shadow);transition:transform .12s,box-shadow .12s}
+  .fresh:hover{transform:translateY(-1px);box-shadow:0 5px 0 var(--shadow)}
+  .fresh:active{transform:translateY(2px);box-shadow:0 1px 0 var(--shadow)}
+  .fresh[disabled]{opacity:.6;cursor:wait}
+  .spin{width:14px;height:14px;border:2px solid var(--ink);border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite;display:none}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .fresh.loading .spin{display:inline-block}
+  .fresh.loading .star{display:none}
+  .meta{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin:0 2px 16px;font-size:13px;color:var(--ink-soft);font-weight:500}
+  .meta b{color:var(--ink);font-weight:700}
+  .note{font-family:'Fraunces',serif;font-style:italic}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+  .card{position:relative;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:9px;overflow:hidden;box-shadow:0 4px 0 var(--shadow);transition:transform .15s,box-shadow .15s;animation:rise .5s both}
+  .card:hover{transform:translate(-2px,-3px);box-shadow:0 9px 0 var(--shadow)}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .card .strip{position:absolute;top:0;left:0;right:0;height:7px;background:var(--c)}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-top:4px}
+  .catlbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--c);display:inline-flex;align-items:center;gap:5px}
+  .badge{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap}
+  .badge.free{background:var(--palm);color:#fff8ec}
+  .badge.paid{background:#efe6d2;color:var(--ink-soft)}
+  .badge.new{background:var(--terracotta);color:#fff8ec}
+  .card h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;line-height:1.05;letter-spacing:-.01em}
+  .when{font-weight:700;font-size:13.5px;color:var(--ink)}
+  .when .next{font-weight:500;color:var(--ink-soft)}
+  .where{font-size:13px;color:var(--ink-soft);display:flex;gap:6px;align-items:baseline}
+  .where .hood{font-weight:700;color:var(--ink)}
+  .desc{font-size:13.5px;color:var(--ink-soft);flex:1}
+  .card a.go{margin-top:4px;align-self:flex-start;font-family:'Hanken Grotesk';font-weight:700;font-size:13px;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--c);padding-bottom:1px}
+  .card a.go:hover{color:var(--c)}
+  .card a.go span{transition:margin .15s}
+  .card a.go:hover span{margin-left:4px}
+  .empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink-soft)}
+  .empty .big{font-family:'Fraunces',serif;font-style:italic;font-size:30px;color:var(--ink);margin-bottom:8px}
+  .err{grid-column:1/-1;border:2px dashed var(--terracotta);border-radius:12px;padding:18px;color:var(--terracotta);font-weight:600;font-size:14px;display:none}
+  footer{margin-top:46px;padding-top:22px;border-top:2px solid var(--line);font-size:12.5px;color:var(--ink-soft)}
+  footer a{color:var(--ink-soft)}
+  footer .srcs{margin-top:8px;line-height:1.8}
+  footer b{color:var(--ink)}
+  @media(max-width:560px){header.mast{padding:28px 0 14px}.controls{padding:13px;border-radius:11px}.fresh{margin-left:0;width:100%;justify-content:center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="kicker">
+      <span><span class="sun">&#9728;</span> Curated for Los Angeles</span>
+      <span id="dateline"></span>
+    </div>
+    <h1>The&nbsp;L.A.<br><span class="em">Roundup</span></h1>
+    <p class="tag">Food, farmers markets, comedy, fairs, flea markets &amp; more &mdash; everything worth leaving the house for, sorted the way you like it.</p>
+    <nav class="periods" id="periods">
+      <button class="period" data-p="weekend">This Weekend</button>
+      <button class="period active" data-p="week">This Week</button>
+      <button class="period" data-p="month">This Month</button>
+      <button class="period" data-p="all">Everything</button>
+    </nav>
+  </header>
+
+  <section class="controls">
+    <div class="chips" id="chips"></div>
+    <div class="row2">
+      <label class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2"/></svg>
+        <input id="search" type="text" placeholder="Search events, venues, neighborhoods&hellip;">
+      </label>
+      <select id="hood"></select>
+      <button class="freebtn" id="freebtn" data-on="0">Free only</button>
+      <button class="fresh" id="fresh"><span class="star">&#10024;</span><span class="spin"></span><span id="freshlbl">Find fresh events</span></button>
+    </div>
+  </section>
+
+  <div class="meta">
+    <span id="count"></span>
+    <span class="note" id="periodnote"></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <b>How this works.</b> Listings below are hand-curated from real LA sources. Recurring markets always appear; one-off events are filed under the right week. Tap <b>&#10024; Find fresh events</b> to pull brand-new listings from the live web for whichever period you&rsquo;re viewing (requires the proxy &mdash; see the README).
+    <div class="srcs">
+      <b>Sources:</b> Discover Los Angeles &middot; Time Out LA &middot; We Like L.A. &middot; Eventbrite &middot; Smorgasburg &middot; RGC Shows (Rose Bowl) &middot; Melrose Trading Post &middot; 626 Night Market &middot; LA County Fair &middot; venue calendars.
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   ⚙️  CONFIG
+   Set PROXY_URL to your deployed proxy endpoint to turn on the
+   live "Find fresh events" feature. Leave it "" for a purely
+   curated board (works on plain GitHub Pages with no backend).
+   See README.md → "Turning on the live feature".
+   ============================================================ */
+const PROXY_URL = ""; // e.g. "https://la-roundup-proxy.YOURNAME.workers.dev"
+
+const CATS = {
+  "Food & Drink":      {color:"var(--terracotta)", hex:"#d4512a", icon:"\uD83C\uDF74"},
+  "Farmers Markets":   {color:"var(--palm)",       hex:"#2f6b46", icon:"\uD83E\uDD55"},
+  "Flea & Vintage":    {color:"var(--teal)",       hex:"#1d6f78", icon:"\uD83D\uDECD\uFE0F"},
+  "Comedy":            {color:"var(--pink)",       hex:"#d6406b", icon:"\uD83C\uDFA4"},
+  "Fairs & Festivals": {color:"var(--gold)",       hex:"#dd9012", icon:"\uD83C\uDFA1"},
+  "Arts & Music":      {color:"var(--indigo)",     hex:"#46569d", icon:"\uD83C\uDFB6"}
+};
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+/* ============================================================
+   📋  CURATED EVENTS  — edit this list to refresh the board.
+   recur: weekday indexes (0=Sun…6=Sat) for weekly events.
+   start / end: "YYYY-MM-DD" for one-off or multi-day events.
+   ============================================================ */
+const SEED = [
+  // ---- Farmers Markets ----
+  {t:"Hollywood Farmers' Market",cat:"Farmers Markets",hood:"Hollywood",venue:"Ivar & Selma Ave",recur:[0],when:"Sundays \u00B7 8am\u20131pm",free:true,price:"Free",
+   d:"160+ farmers and food artisans; LA chefs shop here. Live music, cooking demos and the best stone fruit in the city.",u:"https://see-la.org/markets/hollywood/"},
+  {t:"Downtown Santa Monica Farmers Market",cat:"Farmers Markets",hood:"Santa Monica",venue:"Arizona Ave & 2nd St",recur:[3,6],when:"Wed & Sat \u00B7 8am\u20131pm",free:true,price:"Free",
+   d:"The crown jewel of SoCal markets \u2014 the grower-only stalls where Michelin chefs source their produce.",u:"https://www.santamonica.gov/farmers-markets"},
+  {t:"Santa Monica Main Street Market",cat:"Farmers Markets",hood:"Santa Monica",venue:"2640 Main St",recur:[0],when:"Sundays \u00B7 8:30am\u20131:30pm",free:true,price:"Free",
+   d:"The family-friendly Sunday market: heaviest on prepared food, live music and a beach-town hang.",u:"https://www.santamonica.gov/farmers-markets"},
+  {t:"Mar Vista Farmers Market",cat:"Farmers Markets",hood:"Mar Vista",venue:"Grand View & Venice Blvd",recur:[0],when:"Sundays \u00B7 9am\u20132pm",free:true,price:"Free",
+   d:"Beloved eco-minded Westside market with a strong prepared-food row and a low-key neighborhood feel.",u:"https://www.marvistafarmersmarket.org/"},
+  {t:"Silver Lake Farmers Market",cat:"Farmers Markets",hood:"Silver Lake",venue:"Sunset Blvd & Maltman",recur:[2,6],when:"Tue & Sat \u00B7 9am\u20132pm",free:true,price:"Free",
+   d:"Compact Eastside favorite \u2014 great flowers, fresh tortillas, and a tight roster of regular growers.",u:"https://www.discoverlosangeles.com/things-to-do/los-angeles-farmers-markets"},
+
+  // ---- Flea & Vintage ----
+  {t:"Melrose Trading Post",cat:"Flea & Vintage",hood:"Fairfax",venue:"Fairfax High, 7850 Melrose Ave",recur:[0],when:"Sundays \u00B7 9am\u20135pm",free:false,price:"$5",
+   d:"Antiques, vintage threads, art and handmade wares from 200+ vendors. Admission funds the high school.",u:"https://melrosetradingpost.org/"},
+  {t:"Artists & Fleas Venice",cat:"Flea & Vintage",hood:"Venice",venue:"Abbot Kinney & Westminster",recur:[6],when:"Saturdays \u00B7 10am\u20135pm",free:true,price:"Free",
+   d:"The Westside outpost of the NYC market: indie makers, vintage-inspired fashion, jewelry and snacks.",u:"https://www.artistsandfleas.com/pages/venice"},
+  {t:"Rose Bowl Flea Market",cat:"Flea & Vintage",hood:"Pasadena",venue:"Rose Bowl Stadium",start:"2026-06-14",when:"Sun, Jun 14 \u00B7 from 9am",free:false,price:"$12\u2013$25",
+   d:"The legendary \u201CFlea Market of the Stars\u201D \u2014 2,500+ vendors, color-coded zones, world-class vintage. 2nd Sunday monthly.",u:"https://www.rgcshows.com/rose-bowl/"},
+  {t:"PCC Flea Market",cat:"Flea & Vintage",hood:"Pasadena",venue:"Pasadena City College",start:"2026-06-07",when:"Sun, Jun 7 \u00B7 8am\u20133pm",free:true,price:"Free",
+   d:"400+ vendors of antiques, records and collectibles in the PCC parking structures. 1st Sunday monthly.",u:"https://pasadena.edu/community/flea-market/"},
+  {t:"Long Beach Antique Market",cat:"Flea & Vintage",hood:"Long Beach",venue:"Veterans Stadium",start:"2026-06-21",when:"Sun, Jun 21 \u00B7 6:30am\u20132pm",free:false,price:"$6\u2013$8",
+   d:"800+ booths of true antiques and mid-century finds. Earlier and bigger than most. 3rd Sunday monthly.",u:"https://www.longbeachantiquemarket.com/"},
+  {t:"Topanga Vintage Market",cat:"Flea & Vintage",hood:"Woodland Hills",venue:"Pierce College",start:"2026-06-28",when:"Sun, Jun 28 \u00B7 8am\u20133pm",free:false,price:"$5",
+   d:"Curated vintage and handmade goods with a canyon vibe and food trucks. 4th Sunday monthly.",u:"https://topangavintagemarket.com/"},
+
+  // ---- Food & Drink ----
+  {t:"Smorgasburg LA",cat:"Food & Drink",hood:"Downtown LA",venue:"ROW DTLA, 777 Alameda St",recur:[0],when:"Sundays \u00B7 10am\u20134pm",free:true,price:"Free entry",
+   d:"LA\u2019s essential open-air food market: 100+ vendors of tacos, skewers, churros and small-batch everything.",u:"https://www.smorgasburg.com/los-angeles"},
+  {t:"Uncorked: LA Wine Festival",cat:"Food & Drink",hood:"Exposition Park",venue:"California Science Center",start:"2026-06-06",when:"Sat, Jun 6 \u00B7 7pm",free:false,price:"$$",
+   d:"100+ wines and bubblies to taste, plus live DJ sets and a 360 photo booth among the exhibits.",u:"https://www.uncorkedwinefestivals.com/los-angeles"},
+  {t:"LA Independent Beer Fest",cat:"Food & Drink",hood:"Long Beach",venue:"Shoreline Aquatic Park",start:"2026-06-14",when:"Sun, Jun 14 \u00B7 afternoon",free:false,price:"$$",
+   d:"Samples from 75 local independent breweries with ocean breezes, live music and lawn games. By the LA County Brewers Guild.",u:"https://www.eventbrite.com/d/ca--los-angeles/food-and-drink--festivals/"},
+  {t:"626 Night Market",cat:"Food & Drink",hood:"Arcadia",venue:"Santa Anita Park",start:"2026-06-19",end:"2026-06-21",when:"Jun 19\u201321 \u00B7 4pm\u2013late",free:false,price:"~$12",
+   d:"The huge Asian-inspired night market: 200+ food, craft and merchandise booths under the lights.",u:"https://626nightmarket.com/"},
+  {t:"Vegan Street Fair (Monthly)",cat:"Food & Drink",hood:"North Hollywood",venue:"NoHo Arts District",start:"2026-06-13",when:"Sat, Jun 13 \u00B7 11am\u20137pm",free:true,price:"Free",
+   d:"The free, all-vegan food crawl \u2014 dozens of plant-based pop-ups and small businesses in one block party.",u:"https://www.eventbrite.com/d/ca--los-angeles/food-festival/"},
+  {t:"FoodieLand Night Market",cat:"Food & Drink",hood:"Pasadena",venue:"Rose Bowl Stadium",start:"2026-07-03",end:"2026-07-05",when:"Jul 3\u20135 \u00B7 4pm\u2013midnight",free:false,price:"~$5",
+   d:"185+ vendors of global street food and entertainment. Lands at the Rose Bowl for July 4th weekend.",u:"https://foodielandnm.com/"},
+
+  // ---- Fairs & Festivals ----
+  {t:"LA County Fair \u2014 Closing Weekend",cat:"Fairs & Festivals",hood:"Pomona",venue:"Fairplex",start:"2026-05-30",end:"2026-05-31",when:"Through Sun, May 31",free:false,price:"$18\u2013$25",
+   d:"Final days! Rides, concerts, livestock, exhibits and gloriously absurd fair food before it wraps for the year.",u:"https://www.lacountyfair.com/"},
+  {t:"Downtown Burbank Summer Arts Festival",cat:"Fairs & Festivals",hood:"Burbank",venue:"Downtown Burbank",start:"2026-05-30",end:"2026-05-31",when:"Sat\u2013Sun, May 30\u201331",free:true,price:"Free",
+   d:"170+ indie makers curated by Jackalope Arts \u2014 fashion, art, home goods and street food across two days.",u:"https://www.welikela.com/a-big-list-of-things-to-do-this-may-in-l-a-2026/"},
+  {t:"WeHo Pride Weekend",cat:"Fairs & Festivals",hood:"West Hollywood",venue:"West Hollywood Park",start:"2026-06-05",end:"2026-06-07",when:"Jun 5\u20137",free:false,price:"Varies (Fri often free)",
+   d:"Parade, street festival and the OUTLOUD music fest (Pussycat Dolls, Ava Max). Friday programming is usually free with RSVP.",u:"https://www.timeout.com/los-angeles/things-to-do/june-events-calendar"},
+  {t:"Santa Monica Pier 360 Beach Festival",cat:"Fairs & Festivals",hood:"Santa Monica",venue:"Santa Monica Pier",start:"2026-06-27",end:"2026-06-28",when:"Jun 27\u201328",free:true,price:"Free",
+   d:"Free all-ages beach-culture fest: ocean sports, skating, live music, games and food vendors on the sand.",u:"https://santamonicapier.org/"},
+  {t:"OC Fair (Opens July)",cat:"Fairs & Festivals",hood:"Costa Mesa",venue:"OC Fair & Event Center",start:"2026-07-18",end:"2026-08-17",when:"Jul 18 \u2013 Aug 17",free:false,price:"$13\u2013$15",
+   d:"The region\u2019s crown-jewel fair \u2014 a month of deep-fried everything, concerts, rides and competitions. Book early.",u:"https://ocfair.com/"},
+
+  // ---- Comedy ----
+  {t:"The Comedy Store",cat:"Comedy",hood:"West Hollywood",venue:"8433 Sunset Blvd",recur:[0,1,2,3,4,5,6],when:"Nightly",free:false,price:"$$",
+   d:"The most influential club on the planet \u2014 three rooms, surprise A-list drop-ins and tomorrow\u2019s stars tonight.",u:"https://thecomedystore.com/"},
+  {t:"Largo at the Coronet",cat:"Comedy",hood:"Beverly Grove",venue:"366 N La Cienega Blvd",recur:[2,3,4,5,6],when:"Select nights",free:false,price:"$$",
+   d:"Comedy meets music: Paul Scheer\u2019s monthly improv, podcast tapings and unannounced legends. Check the calendar.",u:"https://www.largo-la.com/"},
+  {t:"Laugh Factory Hollywood",cat:"Comedy",hood:"Hollywood",venue:"8001 Sunset Blvd",recur:[0,1,2,3,4,5,6],when:"Nightly",free:false,price:"$$",
+   d:"Sunset Strip stalwart with multiple shows a night and a steady stream of touring headliners.",u:"https://laughfactory.com/clubs/los-angeles"},
+  {t:"Hollywood Improv",cat:"Comedy",hood:"Melrose",venue:"8162 Melrose Ave",recur:[0,1,2,3,4,5,6],when:"Nightly",free:false,price:"$$",
+   d:"The original Improv \u2014 main room plus the intimate Lab for new material and pop-up sets.",u:"https://improv.com/hollywood/"},
+  {t:"Jay Leno at The Comedy & Magic Club",cat:"Comedy",hood:"Hermosa Beach",venue:"1018 Hermosa Ave",start:"2026-06-14",when:"Sun, Jun 14 (also Jun 21)",free:false,price:"$$",
+   d:"Leno still works out new material at his longtime South Bay home base most Sunday nights. A local institution.",u:"https://www.comedyandmagicclub.com/"},
+
+  // ---- Arts & Music ----
+  {t:"Off the 405 at the Getty",cat:"Arts & Music",hood:"Brentwood",venue:"Getty Center",start:"2026-06-13",when:"Sat, Jun 13 \u00B7 6pm (Hunx and His Punx)",free:true,price:"Free",
+   d:"Free Saturday-evening concerts with sweeping city views as the sun drops behind the 405. Arrive early.",u:"https://www.getty.edu/visit/cal/events/"},
+  {t:"Jazz at LACMA",cat:"Arts & Music",hood:"Mid-Wilshire",venue:"LACMA, Hancock Park",recur:[5],when:"Fridays \u00B7 6\u20138pm",free:true,price:"Free",
+   d:"A summertime tradition \u2014 free Friday-evening jazz in the museum\u2019s entrance plaza. Bring a blanket.",u:"https://www.lacma.org/programs"},
+  {t:"Latin Sounds at LACMA",cat:"Arts & Music",hood:"Mid-Wilshire",venue:"LACMA, Hancock Park",recur:[6],when:"Saturdays \u00B7 5\u20137pm",free:true,price:"Free",
+   d:"Free outdoor Saturday concerts spanning salsa, son and sounds from across Latin America.",u:"https://www.lacma.org/programs"},
+  {t:"Cinespia at Hollywood Forever",cat:"Arts & Music",hood:"Hollywood",venue:"Hollywood Forever Cemetery",recur:[6],when:"Sat nights \u00B7 gates ~7pm",free:false,price:"$$",
+   d:"Cult classics projected on a mausoleum wall, picnic-style, under the stars. The most LA night out there is.",u:"https://www.cinespia.org/"},
+  {t:"Barnsdall Friday Wine Nights",cat:"Arts & Music",hood:"Los Feliz",venue:"Barnsdall Art Park",recur:[5],when:"Fridays \u00B7 5:30\u20138:30pm",free:false,price:"$45",
+   d:"Curated wine flights, food trucks and DJs on the West Lawn with sunset views of the Hollywood Sign.",u:"https://www.welikela.com/things-to-do-this-weekend-in-los-angeles-5-29-2026-to-5-31-2026/"}
+];
+SEED.forEach((e,i)=>e.id="s"+i);
+let EVENTS = SEED.slice();
+
+const state = {period:"week", cats:new Set(), hood:"", q:"", freeOnly:false};
+const NOW = new Date();
+
+function parse(d){ if(!d) return null; const [y,m,da]=d.split("-").map(Number); return new Date(y,m-1,da); }
+function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+function endOfDay(d){ const x=new Date(d); x.setHours(23,59,59,999); return x; }
+function weekendRange(){
+  const d=startOfDay(NOW); const day=d.getDay();
+  let off; if(day===6) off=0; else if(day===0) off=-1; else off=6-day;
+  const sat=new Date(d); sat.setDate(d.getDate()+off);
+  const sun=new Date(sat); sun.setDate(sat.getDate()+1);
+  return [startOfDay(sat), endOfDay(sun)];
+}
+function rangeFor(period){
+  const today=startOfDay(NOW);
+  if(period==="weekend") return weekendRange();
+  if(period==="week"){ const e=new Date(today); e.setDate(today.getDate()+6); return [today,endOfDay(e)]; }
+  if(period==="month"){ const e=new Date(today); e.setDate(today.getDate()+31); return [today,endOfDay(e)]; }
+  const e=new Date(today); e.setFullYear(today.getFullYear()+2); return [today,endOfDay(e)];
+}
+function nextOccurrence(days){
+  const today=startOfDay(NOW);
+  for(let i=0;i<7;i++){ const c=new Date(today); c.setDate(today.getDate()+i); if(days.includes(c.getDay())) return c; }
+  return today;
+}
+function inPeriod(e,period){
+  const [rs,re]=rangeFor(period);
+  if(e.recur && e.recur.length) return true;
+  const s=parse(e.start)||NOW; const en=parse(e.end)||s;
+  return startOfDay(s)<=re && endOfDay(en)>=rs;
+}
+function nextLabel(e){
+  if(!e.recur||!e.recur.length) return "";
+  const n=nextOccurrence(e.recur); const opt={month:"short",day:"numeric"};
+  return "Next: "+DOW[n.getDay()]+", "+n.toLocaleDateString("en-US",opt);
+}
+
+function buildChips(){
+  const c=document.getElementById("chips"); c.innerHTML="";
+  Object.keys(CATS).forEach(name=>{
+    const b=document.createElement("button");
+    b.className="chip"; b.dataset.on="0"; b.style.setProperty("--c",CATS[name].color);
+    b.innerHTML='<span class="dot"></span>'+name;
+    b.onclick=()=>{ if(state.cats.has(name)){state.cats.delete(name);b.dataset.on="0";} else {state.cats.add(name);b.dataset.on="1";} render(); };
+    c.appendChild(b);
+  });
+}
+function buildHoods(){
+  const sel=document.getElementById("hood");
+  const hoods=[...new Set(EVENTS.map(e=>e.hood))].sort();
+  sel.innerHTML='<option value="">All neighborhoods</option>'+hoods.map(h=>`<option value="${h}">${h}</option>`).join("");
+}
+function matches(e){
+  if(!inPeriod(e,state.period)) return false;
+  if(state.cats.size && !state.cats.has(e.cat)) return false;
+  if(state.hood && e.hood!==state.hood) return false;
+  if(state.freeOnly && !e.free) return false;
+  if(state.q){
+    const hay=(e.t+" "+e.venue+" "+e.hood+" "+e.cat+" "+e.d).toLowerCase();
+    if(!hay.includes(state.q.toLowerCase())) return false;
+  }
+  return true;
+}
+function sortKey(e){
+  if(e.recur && e.recur.length) return nextOccurrence(e.recur).getTime();
+  return (parse(e.start)||NOW).getTime();
+}
+function render(){
+  const grid=document.getElementById("grid");
+  const list=EVENTS.filter(matches).sort((a,b)=>sortKey(a)-sortKey(b));
+  grid.innerHTML="";
+  document.getElementById("count").innerHTML=`<b>${list.length}</b> event${list.length!==1?"s":""} found`;
+  const notes={weekend:"Sat \u2013 Sun ahead",week:"Next 7 days",month:"Next ~4 weeks",all:"Everything on the board"};
+  document.getElementById("periodnote").textContent=notes[state.period];
+  if(!list.length){
+    grid.innerHTML=`<div class="empty"><div class="big">Nothing matches\u2026 yet.</div>
+      Loosen a filter, or tap <b>&#10024; Find fresh events</b> to pull new listings from the web.</div>`;
+    return;
+  }
+  list.forEach((e,i)=>{
+    const meta=CATS[e.cat]||{color:"var(--ink)",icon:""};
+    const card=document.createElement("article");
+    card.className="card"; card.style.setProperty("--c",meta.color);
+    card.style.animationDelay=(Math.min(i,12)*0.035)+"s";
+    const badge=e.fresh?'<span class="badge new">New find</span>':(e.free?'<span class="badge free">Free</span>':`<span class="badge paid">${e.price||"$$"}</span>`);
+    const nxt=e.recur&&e.recur.length?`<span class="next"> \u00B7 ${nextLabel(e)}</span>`:"";
+    card.innerHTML=`
+      <div class="strip"></div>
+      <div class="top"><span class="catlbl">${meta.icon} ${e.cat}</span>${badge}</div>
+      <h3>${e.t}</h3>
+      <div class="when">${e.when}${nxt}</div>
+      <div class="where"><span class="hood">${e.hood}</span><span>&middot; ${e.venue}</span></div>
+      <p class="desc">${e.d}</p>
+      <a class="go" href="${e.u}" target="_blank" rel="noopener">Visit site <span>&rarr;</span></a>`;
+    grid.appendChild(card);
+  });
+}
+
+/* ---- Live: pull fresh events through your proxy ---- */
+async function findFresh(){
+  const btn=document.getElementById("fresh"); const lbl=document.getElementById("freshlbl");
+  if(!PROXY_URL){
+    flashError("Live search isn\u2019t configured yet. Set PROXY_URL near the top of index.html to your deployed proxy URL \u2014 see README.md \u2192 \u201CTurning on the live feature.\u201D");
+    return;
+  }
+  if(btn.classList.contains("loading")) return;
+  btn.classList.add("loading"); btn.disabled=true; lbl.textContent="Searching the web\u2026";
+  try{
+    const res=await fetch(PROXY_URL,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ period:state.period, categories:[...state.cats], exclude:EVENTS.map(e=>e.t) })
+    });
+    if(!res.ok) throw new Error("proxy "+res.status);
+    const data=await res.json();
+    const found=Array.isArray(data.events)?data.events:[];
+    const have=new Set(EVENTS.map(e=>e.t.toLowerCase().trim()));
+    let added=0;
+    found.forEach((e,i)=>{
+      if(!e.t||!e.u) return;
+      if(have.has(e.t.toLowerCase().trim())) return;
+      if(!CATS[e.cat]) e.cat="Food & Drink";
+      e.id="f"+Date.now()+i; e.fresh=true; e.free=!!e.free;
+      e.price=e.price||(e.free?"Free":"$$"); e.when=e.when||"See site";
+      e.start = state.period==="weekend" ? toISO(weekendRange()[0]) : toISO(NOW);
+      e.hood=e.hood||"Los Angeles"; e.venue=e.venue||""; e.d=e.d||"";
+      EVENTS.push(e); added++;
+    });
+    buildHoods(); document.getElementById("hood").value=state.hood; render();
+    lbl.textContent=added?`Added ${added} fresh`:"No new ones found";
+  }catch(err){
+    flashError("Couldn\u2019t reach the live search just now \u2014 your curated board is still fully usable. Check that PROXY_URL is correct and your proxy is deployed.");
+    lbl.textContent="Live search failed";
+  }finally{
+    btn.classList.remove("loading"); btn.disabled=false;
+    setTimeout(()=>{ lbl.textContent="Find fresh events"; },2800);
+  }
+}
+function toISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function flashError(msg){
+  const grid=document.getElementById("grid");
+  let e=document.getElementById("liveerr");
+  if(!e){ e=document.createElement("div"); e.id="liveerr"; e.className="err"; grid.prepend(e); }
+  e.textContent=msg; e.style.display="block";
+  setTimeout(()=>{ if(e) e.style.display="none"; },6500);
+}
+
+document.getElementById("periods").addEventListener("click",ev=>{
+  const b=ev.target.closest(".period"); if(!b) return;
+  state.period=b.dataset.p;
+  document.querySelectorAll(".period").forEach(x=>x.classList.toggle("active",x===b));
+  render();
+});
+document.getElementById("search").addEventListener("input",e=>{ state.q=e.target.value; render(); });
+document.getElementById("hood").addEventListener("change",e=>{ state.hood=e.target.value; render(); });
+document.getElementById("freebtn").addEventListener("click",e=>{ state.freeOnly=!state.freeOnly; e.target.dataset.on=state.freeOnly?"1":"0"; render(); });
+document.getElementById("fresh").addEventListener("click",findFresh);
+(function(){ const opt={weekday:"long",month:"long",day:"numeric",year:"numeric"}; document.getElementById("dateline").textContent=NOW.toLocaleDateString("en-US",opt); })();
+buildChips(); buildHoods(); render();
+</script>
+</body>
+</html>
